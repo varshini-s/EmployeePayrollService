@@ -1,7 +1,13 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import com.bridgelabz.employeepayrollservice.EmployeePayrollService.IOService;
 
 public class EmployeePayrollMain 
 {
@@ -14,7 +20,8 @@ public class EmployeePayrollMain
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
 		Scanner consoleInPutReader = new Scanner(System.in);
 		employeePayrollService.readEmployeePayrollData(consoleInPutReader);
-		employeePayrollService.writeEmployeePayrollData();
+		employeePayrollService.writeEmployeePayrollData(IOService.CONSOLE_IO);
+		
 
 	}
 
