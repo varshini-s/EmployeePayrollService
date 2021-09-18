@@ -26,5 +26,9 @@ public class EmployeePayrollService
 		employeePyrollList.add(new EmployeePayrollData(id, name, salary));
 	}
 	
-
+	public void writeEmployeePayrollData()
+	{
+		System.out.println("\nWriting employee payroll info to console:\n "+employeePyrollList);
+		
+	}
 }
