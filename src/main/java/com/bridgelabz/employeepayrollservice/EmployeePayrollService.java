@@ -50,7 +50,16 @@ public class EmployeePayrollService
 		
 	}
 
-
+	public long readEmployeePayrollData(IOService ioService)
+	{
+		if(ioService.equals(IOService.FILE_IO))
+		{
+			this.employeePyrollList=new EmployeePayrollFileIOService().readData();
+		}
+		
+		return employeePyrollList.size();
+	}
+	
 	public long countEntries(IOService ioService) 
 	{
 
