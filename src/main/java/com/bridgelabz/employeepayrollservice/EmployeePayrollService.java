@@ -3,11 +3,15 @@ package com.bridgelabz.employeepayrollservice;
 import java.util.List;
 import java.util.Scanner;
 
+import com.bridgelabz.employeepayrollservice.EmployeePayrollService.IOService;
+
 public class EmployeePayrollService 
 {
 
 	public enum IOService {CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 	private List<EmployeePayrollData> employeePyrollList;
+	
+	public EmployeePayrollService() {	}
 		
 	public EmployeePayrollService(List<EmployeePayrollData> employeePyrollList) 
 	{
@@ -26,9 +30,16 @@ public class EmployeePayrollService
 		employeePyrollList.add(new EmployeePayrollData(id, name, salary));
 	}
 	
-	public void writeEmployeePayrollData()
+	public void writeEmployeePayrollData(IOService ioService)
 	{
+		if(ioService.equals(IOService.CONSOLE_IO))
 		System.out.println("\nWriting employee payroll info to console:\n "+employeePyrollList);
+		else if(ioService.equals(IOService.FILE_IO))
+		{
+			new EmployeePayrollFileIOService().writeData(employeePyrollList);
+		}
 		
 	}
+
+
 }
