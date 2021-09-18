@@ -15,5 +15,16 @@ public class EmployeePayrollService
 	
 	}
 	
+	public void readEmployeePayrollData(Scanner consoleInputReader)
+	{
+		System.out.println("Enter employee id: ");
+		int id=consoleInputReader.nextInt();
+		System.out.println("Enter Employee name: ");
+		String name=consoleInputReader.next();
+		System.out.println("Enter employee salary: ");
+		double salary=consoleInputReader.nextDouble();
+		employeePyrollList.add(new EmployeePayrollData(id, name, salary));
+	}
+	
 
 }
