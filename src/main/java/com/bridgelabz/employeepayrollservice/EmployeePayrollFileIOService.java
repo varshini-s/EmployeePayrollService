@@ -59,6 +59,34 @@ public class EmployeePayrollFileIOService
 		return entries;
 	}
 	
-
+	public List<EmployeePayrollData> readData()
+	{
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		
+		List<String[]> employeeDataFromFile = new ArrayList<String[]>();
+		try
+		{
+			Files.lines(new File("payroll-file.txt").toPath())
+				.map(line->line.trim())
+				.forEach(line->employeeDataFromFile.add(line.split(",")));
+			
+			//if line is given as->id=1,name='Sheldon', salary=100000.0    ,Split at "," first, then at equals and get second part
+			for(int index=0;index<employeeDataFromFile.size();index++)
+			{
+				
+				employeePayrollList.add(new EmployeePayrollData(Integer.parseInt(employeeDataFromFile.get(index)[0].split("=")[1])
+										,employeeDataFromFile.get(index)[1].split("=")[1]
+										,Double.parseDouble(employeeDataFromFile.get(index)[2].split("=")[1])));
+			}
+			
+			
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return employeePayrollList;
+	}
 	
 }
