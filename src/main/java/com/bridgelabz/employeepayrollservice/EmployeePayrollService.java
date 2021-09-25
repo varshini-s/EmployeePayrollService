@@ -50,14 +50,18 @@ public class EmployeePayrollService
 		
 	}
 
-	public long readEmployeePayrollData(IOService ioService)
+	public  List<EmployeePayrollData> readEmployeePayrollData(IOService ioService)
 	{
 		if(ioService.equals(IOService.FILE_IO))
 		{
 			this.employeePyrollList=new EmployeePayrollFileIOService().readData();
 		}
+		else if(ioService.equals(IOService.DB_IO))
+		{
+			this.employeePyrollList=new EmployeePayrollDBService().readData();
+		}
 		
-		return employeePyrollList.size();
+		return employeePyrollList;
 	}
 	
 	public long countEntries(IOService ioService) 
