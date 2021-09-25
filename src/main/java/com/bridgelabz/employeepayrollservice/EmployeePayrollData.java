@@ -1,6 +1,7 @@
 package com.bridgelabz.employeepayrollservice;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EmployeePayrollData 
 {
@@ -21,6 +22,22 @@ public class EmployeePayrollData
 		this(id, employeeName, salary);
 		this.startDate=startDate;
 		
+	}
+	
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EmployeePayrollData other = (EmployeePayrollData) obj;
+		return Objects.equals(employeeName, other.employeeName) && id == other.id
+				&& Double.doubleToLongBits(salary) == Double.doubleToLongBits(other.salary)
+				&& Objects.equals(startDate, other.startDate);
 	}
 
 	public String toString()
