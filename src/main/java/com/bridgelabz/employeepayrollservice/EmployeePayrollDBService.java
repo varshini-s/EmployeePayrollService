@@ -56,8 +56,26 @@ public class EmployeePayrollDBService
 		return employeePayrollList;
 	}
 
-	
+	public int updateEmployeeData(String name, double salary) 
+	{
+		this.updateEmployeeDataUsingStatement(name,salary);
+		return 0;
+	}
 
+	private int updateEmployeeDataUsingStatement(String name, double salary) 
+	{
+		String sql = String.format("UPDATE payroll JOIN employee ON payroll.id=employee.id SET basic_pay = %.2f WHERE name = '%s';",salary,name);
+		try (Connection connection = this.getConnection())
+		{
 
+			Statement statement=connection.createStatement();
+			return statement.executeUpdate(sql);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
 }
