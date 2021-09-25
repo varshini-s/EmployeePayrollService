@@ -29,4 +29,10 @@ dependencies {
     
     compile "commons-io:commons-io:+"
     
+    compile("mysql:mysql-connector-java:5.1.49")
+    
+    
+
+    
+    
 }
