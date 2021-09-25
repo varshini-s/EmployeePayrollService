@@ -95,5 +95,12 @@ public class EmployeePayrollService
 							.orElse(null);
 		
 		return employeePayrollData;
+		
+	}
+
+	public boolean checkEmployeePayrollInSyncWithDB(String name)
+	{
+		List<EmployeePayrollData> employeePayrollDataList=employeePayrollDBService.getEmployeePayrollDataFromDB(name);
+		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
 }
