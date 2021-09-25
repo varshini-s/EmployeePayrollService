@@ -11,6 +11,8 @@ public class EmployeePayrollService
 	public enum IOService {CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 	private List<EmployeePayrollData> employeePyrollList;
 	
+	EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+	
 	public EmployeePayrollService() {	}
 		
 	public EmployeePayrollService(List<EmployeePayrollData> employeePyrollList) 
@@ -73,5 +75,25 @@ public class EmployeePayrollService
 		}
 		
 		return 0;
+	}
+
+	public void updateEmployeeSalary(String name, double salary) 
+	{
+		int result =employeePayrollDBService.updateEmployeeData(name, salary);
+		if(result==0) return;
+		EmployeePayrollData employeePayrollData=this.getEmployeePayrollData(name);
+		if(employeePayrollData!=null) employeePayrollData.salary=salary;
+		
+	}
+
+	private EmployeePayrollData getEmployeePayrollData(String name) 
+	{
+		EmployeePayrollData employeePayrollData;
+		 employeePayrollData=this.employeePyrollList.stream()
+							.filter(employeeDataItem->employeeDataItem.employeeName.equals(name))
+							.findFirst()
+							.orElse(null);
+		
+		return employeePayrollData;
 	}
 }
