@@ -1,6 +1,7 @@
 package com.bridgelabz.employeepayrollservice;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.bridgelabz.employeepayrollservice.EmployeePayrollService.IOService;
@@ -102,5 +103,16 @@ public class EmployeePayrollService
 	{
 		List<EmployeePayrollData> employeePayrollDataList=employeePayrollDBService.getEmployeePayrollDataFromDB(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+	}
+
+	public Map<String, Double> getSalarySumBasedOnGender(IOService ioService) 
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			return employeePayrollDBService.getSalarySumBasedOnGender();
+		}
+
+		
+		return null;
 	}
 }
