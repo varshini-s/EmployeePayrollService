@@ -78,4 +78,36 @@ public class EmployeePayrollDBService
 		return 0;
 	}
 
+	public List<EmployeePayrollData> getEmployeePayrollDataFromDB(String name) 
+	{
+		String sql="SELECT * FROM payroll JOIN employee ON payroll.id=employee.id where name='Terisa'";
+		List<EmployeePayrollData> employeePayrollList=new ArrayList<EmployeePayrollData>();
+		try (Connection connection = this.getConnection())
+		{
+
+			Statement statement=connection.createStatement();
+			ResultSet resultSet=statement.executeQuery(sql);
+
+			while(resultSet.next())
+			{
+				int id=resultSet.getInt("id");
+				String nameFromDB=resultSet.getString("name");
+				double salary=resultSet.getDouble("basic_pay");
+				LocalDate startDate= resultSet.getDate("start").toLocalDate();
+				employeePayrollList.add(new EmployeePayrollData(id, nameFromDB, salary,startDate));
+			}
+
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+
+		return employeePayrollList;
+	}
+	
+	
+
+
+
 }
