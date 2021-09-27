@@ -91,9 +91,31 @@ public class EmployeePayrollDBService
 		return 0;
 	}
 
-	public List<EmployeePayrollData> getEmployeePayrollDataFromDB(String name) 
+	public List<EmployeePayrollData> getEmployeePayrollData(String name)
 	{
-		String sql="SELECT * FROM payroll JOIN employee ON payroll.id=employee.id where name='Terisa'";
+
+		List<EmployeePayrollData> employeePayrollList=null;
+		if(this.employeePayrollDataStatement==null)
+		{
+			this.preparedStatementForEmployeeData();
+		}
+		try
+		{
+			employeePayrollDataStatement.setString(1,name);
+			ResultSet resultSet= employeePayrollDataStatement.executeQuery();
+			employeePayrollList=this.getEmployeePayrollData(resultSet);
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return employeePayrollList;
+	}
+
+	private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet)
+	{
+
 		List<EmployeePayrollData> employeePayrollList=new ArrayList<EmployeePayrollData>();
 		try (Connection connection = this.getConnection())
 		{
