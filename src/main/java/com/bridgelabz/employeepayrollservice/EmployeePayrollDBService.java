@@ -197,5 +197,29 @@ public class EmployeePayrollDBService
 	}
 
 
+	public int getEmployeeJoinCount(String startDate, String endDate)
+	{
+		List<EmployeePayrollData> employeePayrollList=null;
+		if(this.employeePayrollJoinDateStatement==null)
+		{
+			this.preparedStatementToGetEmployeeJoinedCount();
+		}
+		try
+		{
+			employeePayrollJoinDateStatement.setDate(1,java.sql.Date.valueOf(startDate));
+			employeePayrollJoinDateStatement.setDate(2,java.sql.Date.valueOf(endDate));
 
+			ResultSet resultSet= employeePayrollJoinDateStatement.executeQuery();
+			employeePayrollList=this.getEmployeePayrollData(resultSet);
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return employeePayrollList.size();
+
+	}
+
+	
 }
