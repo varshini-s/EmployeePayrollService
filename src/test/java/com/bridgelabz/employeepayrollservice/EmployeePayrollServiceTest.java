@@ -53,7 +53,25 @@ public class EmployeePayrollServiceTest
 	}
 
 	@Test
-	public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDB()
+	public void  givenEmployeePayrollInDB_WhenWrittenToDatabase_ShouldMatchEmployeeCount()
+	{
+		String dateString="2018-01-03";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date= LocalDate.parse(dateString, formatter);
+		EmployeePayrollData[] arrayOfEmployees= { new EmployeePayrollData(5, "Sheldon", 100000.0,date)};
+		
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployees));
+
+		employeePayrollService.writeEmployeePayrollData( IOService.DB_IO);
+		List<EmployeePayrollData> employeePayrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
+
+		Assert.assertEquals(4, employeePayrollList.size());
+		
+		employeePayrollService.deleteEmployeeData(IOService.DB_IO,5);
+	}
+	
+	@Test
+	public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDB() throws UserEntryException
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		List<EmployeePayrollData> employeePyrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
@@ -78,7 +96,7 @@ public class EmployeePayrollServiceTest
 	}
 
 	@Test
-	public void givenDateRangeOfJoiningDate_ShouldReturnCountOfEmployeesJoined()
+	public void givenDateRangeOfJoiningDate_ShouldReturnCountOfEmployeesJoinedFromDataBase()
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
