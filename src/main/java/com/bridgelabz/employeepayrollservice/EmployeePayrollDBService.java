@@ -348,7 +348,21 @@ public class EmployeePayrollDBService
 
 	}
 
-	
+	public void deleteEmployeeData(int id) 
+	{
+
+		String sql = String.format("DELETE FROM employee_payroll WHERE id= '%d';",id);
+		try (Connection connection = this.getConnection())
+		{
+
+			Statement statement=connection.createStatement();
+			statement.executeUpdate(sql);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
 
 
 }
