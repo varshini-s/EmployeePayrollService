@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.bridgelabz.employeepayrollservice.UserEntryException.ExceptionType;
+
 import java.time.LocalDate;
 
 public class EmployeePayrollDBService 
@@ -12,6 +15,8 @@ public class EmployeePayrollDBService
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private PreparedStatement employeePayrollDataStatement;
 	private PreparedStatement employeePayrollJoinDateStatement;
+	private PreparedStatement employeePayrollWriteDataStatement;
+	private PreparedStatement employeePayrollUpdateDataStatement;
 
 
 	public EmployeePayrollDBService()
@@ -62,18 +67,23 @@ public class EmployeePayrollDBService
 	}
 
 
-	public int updateEmployeeData(String name, double salary) 
+
+	public int updateEmployeeData(String name, double salary) throws UserEntryException 
 	{
-		this.updateEmployeeDataUsingStatement(name,salary);
+		this.updateEmployeeDataUsingPreparedStatement(name,salary);
 		return 0;
 	}
 
-	private int updateEmployeeDataUsingStatement(String name, double salary) 
+	private int updateEmployeeDataUsingStatement(String name, double salary) throws UserEntryException 
 	{
 		String sql = String.format("UPDATE employee_payroll  SET basic_pay = %.2f WHERE name = '%s';",salary,name);
 		try (Connection connection = this.getConnection())
 		{
 
+			if(name.isEmpty())
+			{
+				throw new UserEntryException(ExceptionType.ENTERED_EMPTY,"Please enter valid Name");
+			}
 			Statement statement=connection.createStatement();
 			return statement.executeUpdate(sql);
 		} 
@@ -81,10 +91,61 @@ public class EmployeePayrollDBService
 		{
 			e.printStackTrace();
 		}
+		catch (NullPointerException e) 
+		{
+			throw new UserEntryException(ExceptionType.ENTERED_NULL,"Please enter valid Name");
+		}
+		return 0;
+	}
+	private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws UserEntryException 
+	{
+		if(this.employeePayrollUpdateDataStatement==null)
+		{
+			this.preparedStatementForUpdateEmployeeData();
+		}
+		try
+		{
+			if(name.isEmpty())
+			{
+				throw new UserEntryException(ExceptionType.ENTERED_EMPTY,"Please enter valid Name");
+			}
+			employeePayrollUpdateDataStatement.setString(1,name);
+			employeePayrollUpdateDataStatement.setDouble(2,salary);
+
+			return employeePayrollUpdateDataStatement.executeUpdate();
+
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		catch (NullPointerException e) 
+		{
+			throw new UserEntryException(ExceptionType.ENTERED_NULL,"Please enter valid Name");
+		}
+
+
 		return 0;
 	}
 
-	public List<EmployeePayrollData> getEmployeePayrollData(String name)
+	private void preparedStatementForUpdateEmployeeData()
+	{
+		try
+		{
+			Connection connection = this.getConnection();
+			String sql="UPDATE employee_payroll  SET basic_pay = ? WHERE name = ?;";
+
+			employeePayrollUpdateDataStatement=connection.prepareStatement(sql);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	public List<EmployeePayrollData> getEmployeePayrollData(String name) throws UserEntryException
 	{
 
 		List<EmployeePayrollData> employeePayrollList=null;
@@ -94,6 +155,11 @@ public class EmployeePayrollDBService
 		}
 		try
 		{
+
+			if(name.isEmpty())
+			{
+				throw new UserEntryException(ExceptionType.ENTERED_EMPTY,"Please enter valid Name");
+			}
 			employeePayrollDataStatement.setString(1,name);
 			ResultSet resultSet= employeePayrollDataStatement.executeQuery();
 			employeePayrollList=this.getEmployeePayrollData(resultSet);
@@ -102,6 +168,10 @@ public class EmployeePayrollDBService
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		catch (NullPointerException e) 
+		{
+			throw new UserEntryException(ExceptionType.ENTERED_NULL,"Please enter valid Name");
 		}
 		return employeePayrollList;
 	}
@@ -170,9 +240,9 @@ public class EmployeePayrollDBService
 	public Map<String, Double> getSalarySumBasedOnGender()
 	{
 		Map<String, Double> genderSalaryMap = new HashMap<String, Double>();
-		
+
 		String sql="SELECT SUM(basic_pay),gender FROM employee_payroll GROUP BY gender";
-		
+
 		try (Connection connection = this.getConnection())
 		{
 
@@ -183,7 +253,7 @@ public class EmployeePayrollDBService
 			{
 				String gender=resultSet.getString("gender");
 				double salarySum=resultSet.getDouble("SUM(basic_pay)");
-				
+
 				genderSalaryMap.put(gender, salarySum);
 			}
 
@@ -192,7 +262,7 @@ public class EmployeePayrollDBService
 		{
 			e.printStackTrace();
 		}
-		
+
 		return genderSalaryMap;
 	}
 
@@ -234,4 +304,7 @@ public class EmployeePayrollDBService
 			e.printStackTrace();
 		}
 	}
+
+	
+
 }
