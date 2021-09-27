@@ -45,6 +45,10 @@ public class EmployeePayrollService
 		{
 			new EmployeePayrollFileIOService().writeData(employeePyrollList);
 		}
+		else if(ioService.equals(IOService.DB_IO))
+		{
+			employeePayrollDBService.writeData(employeePyrollList);
+		}
 		
 	}
 
@@ -82,7 +86,7 @@ public class EmployeePayrollService
 		return 0;
 	}
 
-	public void updateEmployeeSalary(String name, double salary) 
+	public void updateEmployeeSalary(String name, double salary) throws UserEntryException 
 	{
 		int result =employeePayrollDBService.updateEmployeeData(name, salary);
 		if(result==0) return;
@@ -103,7 +107,7 @@ public class EmployeePayrollService
 		
 	}
 
-	public boolean checkEmployeePayrollInSyncWithDB(String name)
+	public boolean checkEmployeePayrollInSyncWithDB(String name) throws UserEntryException
 	{
 		List<EmployeePayrollData> employeePayrollDataList=employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
@@ -127,5 +131,14 @@ public class EmployeePayrollService
 		}
 
 		return 0;
+	}
+
+	public void deleteEmployeeData(IOService ioService,int id) 
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			 employeePayrollDBService.deleteEmployeeData(id);
+		}
+		
 	}
 }
