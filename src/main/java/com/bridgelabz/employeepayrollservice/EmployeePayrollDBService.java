@@ -43,22 +43,14 @@ public class EmployeePayrollDBService
 
 	public List<EmployeePayrollData> readData() 
 	{
-		String sql="SELECT * FROM payroll JOIN employee ON payroll.id=employee.id";
+		String sql="SELECT * FROM employee_payroll";
 		List<EmployeePayrollData> employeePayrollList=new ArrayList<EmployeePayrollData>();
 		try (Connection connection = this.getConnection())
 		{
 
 			Statement statement=connection.createStatement();
 			ResultSet resultSet=statement.executeQuery(sql);
-
-			while(resultSet.next())
-			{
-				int id=resultSet.getInt("id");
-				String name=resultSet.getString("name");
-				double salary=resultSet.getDouble("basic_pay");
-				LocalDate startDate= resultSet.getDate("start").toLocalDate();
-				employeePayrollList.add(new EmployeePayrollData(id, name, salary,startDate));
-			}
+			employeePayrollList=this.getEmployeePayrollData(resultSet);
 
 		} 
 		catch (SQLException e) 
@@ -69,6 +61,7 @@ public class EmployeePayrollDBService
 		return employeePayrollList;
 	}
 
+
 	public int updateEmployeeData(String name, double salary) 
 	{
 		this.updateEmployeeDataUsingStatement(name,salary);
@@ -77,7 +70,7 @@ public class EmployeePayrollDBService
 
 	private int updateEmployeeDataUsingStatement(String name, double salary) 
 	{
-		String sql = String.format("UPDATE payroll JOIN employee ON payroll.id=employee.id SET basic_pay = %.2f WHERE name = '%s';",salary,name);
+		String sql = String.format("UPDATE employee_payroll  SET basic_pay = %.2f WHERE name = '%s';",salary,name);
 		try (Connection connection = this.getConnection())
 		{
 
@@ -120,9 +113,6 @@ public class EmployeePayrollDBService
 		try (Connection connection = this.getConnection())
 		{
 
-			Statement statement=connection.createStatement();
-			ResultSet resultSet=statement.executeQuery(sql);
-
 			while(resultSet.next())
 			{
 				int id=resultSet.getInt("id");
@@ -132,20 +122,56 @@ public class EmployeePayrollDBService
 				employeePayrollList.add(new EmployeePayrollData(id, nameFromDB, salary,startDate));
 			}
 
-		} 
-		catch (SQLException e) 
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return employeePayrollList;
+
+	}
+
+
+	private void preparedStatementForEmployeeData()
+	{
+		try {
+			Connection connection = this.getConnection();
+			String sql="SELECT * from employee_payroll WHERE name=?";
+			employeePayrollDataStatement=connection.prepareStatement(sql);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public List<EmployeePayrollData> getEmployeePayrollDataFromDBUsingStatement(String name)
+
+	{
+		String sql = String.format("SELECT * FROM employee_payroll  where name= '%s';",name);
+
+		List<EmployeePayrollData> employeePayrollList=new ArrayList<EmployeePayrollData>();
+		try (Connection connection = this.getConnection())
+		{
+
+			Statement statement=connection.createStatement();
+			ResultSet resultSet=statement.executeQuery(sql);
+
+			employeePayrollList=this.getEmployeePayrollData(resultSet);
+		}
+		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
 
 		return employeePayrollList;
 	}
-	
 	public Map<String, Double> getSalarySumBasedOnGender()
 	{
 		Map<String, Double> genderSalaryMap = new HashMap<String, Double>();
 		
-		String sql="SELECT SUM(basic_pay),gender FROM payroll JOIN employee ON payroll.id=employee.id GROUP BY gender";
+		String sql="SELECT SUM(basic_pay),gender FROM employee_payroll GROUP BY gender";
 		
 		try (Connection connection = this.getConnection())
 		{
