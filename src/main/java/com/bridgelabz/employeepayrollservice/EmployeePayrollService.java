@@ -1,10 +1,9 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
-import com.bridgelabz.employeepayrollservice.EmployeePayrollService.IOService;
 
 public class EmployeePayrollService 
 {
@@ -14,7 +13,12 @@ public class EmployeePayrollService
 	
 	EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
 	
-	public EmployeePayrollService() {	}
+	public EmployeePayrollService()
+	{
+
+		employeePayrollDBService=EmployeePayrollDBService.getInstance();
+
+	}
 		
 	public EmployeePayrollService(List<EmployeePayrollData> employeePyrollList) 
 	{
@@ -57,11 +61,11 @@ public class EmployeePayrollService
 	{
 		if(ioService.equals(IOService.FILE_IO))
 		{
-			this.employeePyrollList=new EmployeePayrollFileIOService().readData();
+			this.employeePyrollList=employeePayrollDBService.readData();
 		}
 		else if(ioService.equals(IOService.DB_IO))
 		{
-			this.employeePyrollList=new EmployeePayrollDBService().readData();
+			this.employeePyrollList=employeePayrollDBService.readData();
 		}
 		
 		return employeePyrollList;
@@ -101,7 +105,7 @@ public class EmployeePayrollService
 
 	public boolean checkEmployeePayrollInSyncWithDB(String name)
 	{
-		List<EmployeePayrollData> employeePayrollDataList=employeePayrollDBService.getEmployeePayrollDataFromDB(name);
+		List<EmployeePayrollData> employeePayrollDataList=employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
 
@@ -114,5 +118,14 @@ public class EmployeePayrollService
 
 		
 		return null;
+	}
+	public int getEmployeeJoinCount(IOService ioService, String startDate, String endDate)
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			return employeePayrollDBService.getEmployeeJoinCount( startDate,  endDate);
+		}
+
+		return 0;
 	}
 }
