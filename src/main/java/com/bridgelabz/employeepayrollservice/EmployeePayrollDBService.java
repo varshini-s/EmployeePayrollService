@@ -221,5 +221,17 @@ public class EmployeePayrollDBService
 
 	}
 
-	
+	private void preparedStatementToGetEmployeeJoinedCount()
+	{
+		try
+		{
+			Connection connection = this.getConnection();
+			String sql="SELECT * FROM employee_payroll WHERE start BETWEEN ? AND ?";
+			employeePayrollJoinDateStatement=connection.prepareStatement(sql);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
