@@ -1,19 +1,32 @@
 package com.bridgelabz.employeepayrollservice;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.sql.Statement;
 import java.time.LocalDate;
-import java.sql.Connection;
 
 public class EmployeePayrollDBService 
 {
+	private static EmployeePayrollDBService employeePayrollDBService;
+	private PreparedStatement employeePayrollDataStatement;
+	private PreparedStatement employeePayrollJoinDateStatement;
 
+
+	public EmployeePayrollDBService()
+	{
+
+	}
+
+	public static EmployeePayrollDBService getInstance()
+	{
+		if(employeePayrollDBService==null)
+		{
+			employeePayrollDBService=new EmployeePayrollDBService();
+		}
+		return  employeePayrollDBService;
+	}
 	private Connection getConnection() throws SQLException 
 	{
 		String jdbcURL ="jdbc:mysql://localhost:3306/payroll_service?allowPublicKeyRetrieval=true&useSSL=false";
