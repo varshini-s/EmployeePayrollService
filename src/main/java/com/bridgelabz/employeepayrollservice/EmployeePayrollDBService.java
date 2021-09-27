@@ -305,6 +305,50 @@ public class EmployeePayrollDBService
 		}
 	}
 
+	public void writeData(List<EmployeePayrollData> employeePayrollList)
+	{
+		if(this.employeePayrollWriteDataStatement==null)
+		{
+			this.preparedStatementToWriteEmployeeData();
+		}
+		for(int index=0;index<employeePayrollList.size();index++)
+		{
+			try
+			{
+				EmployeePayrollData employeePayrollData = employeePayrollList.get(index);
+				employeePayrollWriteDataStatement.setInt(1, employeePayrollData.id);
+				employeePayrollWriteDataStatement.setString(2, employeePayrollData.employeeName);
+				employeePayrollWriteDataStatement.setDouble(3, employeePayrollData.salary);
+				employeePayrollWriteDataStatement.setDate(4,java.sql.Date.valueOf(employeePayrollData.startDate));
+
+				employeePayrollWriteDataStatement.executeUpdate();
+
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	private void preparedStatementToWriteEmployeeData()
+	{
+		try
+		{
+			Connection connection = this.getConnection();
+			String sql="INSERT INTO employee_payroll(id,name,basic_pay,start) VALUES (?,?,?,?)";  
+			employeePayrollWriteDataStatement=connection.prepareStatement(sql);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
 	
+
 
 }
