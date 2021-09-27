@@ -1,5 +1,7 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +48,8 @@ public class EmployeePayrollServiceTest
 	public void  givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount()
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePyrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
-		Assert.assertEquals(3, employeePyrollList.size());
+		List<EmployeePayrollData> employeePayrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
+		Assert.assertEquals(3, employeePayrollList.size());
 	}
 
 	@Test
@@ -67,11 +69,26 @@ public class EmployeePayrollServiceTest
 
 		Map<String, Double> expectedGenderSalaryMap = new HashMap<String, Double>();
 		expectedGenderSalaryMap.put("F", 3000000.0);
-		expectedGenderSalaryMap.put("M", 2000000.0);
+		expectedGenderSalaryMap.put("M", 1300000.0);
 
 		Map<String, Double> genderSalaryMap = employeePayrollService.getSalarySumBasedOnGender( IOService.DB_IO);
 
 		Assert.assertEquals(expectedGenderSalaryMap, genderSalaryMap);
+
+	}
+
+	@Test
+	public void givenDateRangeOfJoiningDate_ShouldReturnCountOfEmployeesJoined()
+	{
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String startDate="2018-01-02";
+		String endDate="2019-11-30";
+
+		LocalDate.parse(startDate, formatter);
+		LocalDate.parse(endDate, formatter);
+		int count=employeePayrollService.getEmployeeJoinCount(IOService.DB_IO,startDate,endDate);
+		Assert.assertEquals(2,count);
 
 	}
 
