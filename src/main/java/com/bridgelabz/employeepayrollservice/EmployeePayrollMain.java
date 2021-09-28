@@ -16,11 +16,11 @@ public class EmployeePayrollMain
 	
 	{
 		System.out.println("----Welcome to employee payroll service----");
-		ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		ArrayList<Employee> employeePayrollList = new ArrayList<Employee>();
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
 		Scanner consoleInPutReader = new Scanner(System.in);
-		employeePayrollService.readEmployeePayrollData(consoleInPutReader);
-		employeePayrollService.writeEmployeePayrollData(IOService.CONSOLE_IO);
+		employeePayrollService.readEmployee(consoleInPutReader);
+		employeePayrollService.writeEmployee(IOService.CONSOLE_IO);
 		
 
 	}
