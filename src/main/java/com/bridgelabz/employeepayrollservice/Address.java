@@ -2,31 +2,22 @@ package com.bridgelabz.employeepayrollservice;
 
 public class Address 
 {
-	private int employeeId;
 	private String  houseNumber;
 	private String street;
 	private String city;
 	private String state;
 	private String zip;
 	
-	public Address(int employeeId, String houseNumber, String street, String city, String state, String zip) 
+	public Address( String houseNumber, String street, String city, String state, String zip) 
 	{
 		
-		this.employeeId = employeeId;
 		this.houseNumber = houseNumber;
 		this.street = street;
 		this.city = city;
 		this.state = state;
 		this.zip = zip;
 	}
-	public int getEmployeeId()
-	{
-		return employeeId;
-	}
-	public void setEmployeeId(int employeeId) 
-	{
-		this.employeeId = employeeId;
-	}
+
 	public String getHouseNumber() 
 	{
 		return houseNumber;
