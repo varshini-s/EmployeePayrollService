@@ -106,7 +106,21 @@ public class EmployeePayrollServiceTest
 		
 		
 	}
+	
+	@Test
+	public void whenEmployeeIsRemoved_DatabaseShouldContainEmployeeDetailAsInactive() 
+	{
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		int count = employeePayrollService.readEmployee( IOService.DB_IO).size();
+		List<Employee> employeeListFromDBEmployees=	employeePayrollService .removeEmployee(IOService.DB_IO,1);
+		List<Employee> employeeListInMemory = employeePayrollService.getEmployeePayrollList();
+		Assert.assertEquals(employeeListFromDBEmployees.size(), count);
+		Assert.assertEquals(employeeListInMemory.size(), count-1);
 
+		
+		
+	}
+	
 
 
 }
