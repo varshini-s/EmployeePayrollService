@@ -371,5 +371,24 @@ public class EmployeePayrollDBService
 
 	}
 
+	public List<Employee> removeEmployee(int id)
+	{
+		
+		String sql = String.format("UPDATE employee SET is_active=false WHERE id = '%d';",id);
+		try (Connection connection = this.getConnection())
+		{
+
+			Statement statement=connection.createStatement();
+			 statement.executeUpdate(sql);
+			return this.readData();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+
 
 }
