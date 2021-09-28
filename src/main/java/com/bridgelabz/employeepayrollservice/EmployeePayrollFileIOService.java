@@ -12,7 +12,7 @@ public class EmployeePayrollFileIOService
 
 	public static String PAYROLL_FILE_NAME="payroll-file.txt";
 
-	public void writeData(List<EmployeePayrollData> employeePayrollList)
+	public void writeData(List<Employee> employeePayrollList)
 	{
 		StringBuffer empBuffer = new StringBuffer();
 		employeePayrollList.forEach(employee -> {
@@ -59,9 +59,9 @@ public class EmployeePayrollFileIOService
 		return entries;
 	}
 	
-	public List<EmployeePayrollData> readData()
+	public List<Employee> readData()
 	{
-		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		List<Employee> employeePayrollList = new ArrayList<Employee>();
 		
 		List<String[]> employeeDataFromFile = new ArrayList<String[]>();
 		try
@@ -74,9 +74,9 @@ public class EmployeePayrollFileIOService
 			for(int index=0;index<employeeDataFromFile.size();index++)
 			{
 				
-				employeePayrollList.add(new EmployeePayrollData(Integer.parseInt(employeeDataFromFile.get(index)[0].split("=")[1])
+				employeePayrollList.add(new Employee(Integer.parseInt(employeeDataFromFile.get(index)[0].split("=")[1])
 										,employeeDataFromFile.get(index)[1].split("=")[1]
-										,Double.parseDouble(employeeDataFromFile.get(index)[2].split("=")[1])));
+										,Double.parseDouble(employeeDataFromFile.get(index)[3].split("=")[1])));
 			}
 			
 			
