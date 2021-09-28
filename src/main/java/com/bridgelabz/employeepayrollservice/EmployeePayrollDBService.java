@@ -278,5 +278,98 @@ public class EmployeePayrollDBService
 	}
 
 
-	
+	public Employee addEmployeeToPayroll( String employeeName, String gender, double salary, LocalDate startDate,
+										int companyId) throws SQLException 
+	{
+		int employeeId=-1;
+		Connection connection=null;
+		Employee employeeData=null;
+
+		try 
+		{
+			connection=this.getConnection();
+			connection.setAutoCommit(false);
+		} catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+
+		try(Statement statement=connection.createStatement())
+		{
+			String sql=String.format("INSERT INTO employee(name,gender,salary,start,company_id) VALUES ('%s','%s','%s','%s','%s');", employeeName,gender,salary,startDate,companyId);
+			int rowAffected = statement.executeUpdate(sql,statement.RETURN_GENERATED_KEYS);
+			if(rowAffected==1)
+			{
+				ResultSet resultSet=statement.getGeneratedKeys();
+				if(resultSet.next()) employeeId=resultSet.getInt(1);
+			}
+
+		}
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			try 
+			{
+				connection.rollback();
+
+			} catch (Exception ex) 
+			{
+
+				ex.printStackTrace();
+			}
+		}
+		try(Statement statement=connection.createStatement())
+		{
+			double deductions=salary*0.2;
+			double taxablePay=salary-deductions;
+			double tax=taxablePay*0.1;
+			double netPay=salary-tax;
+
+			String sql=String.format("INSERT INTO payroll(id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES "
+								 + "('%s','%s','%s','%s','%s','%s');",employeeId,salary,deductions,taxablePay,tax,netPay);
+			int rowAffected=statement.executeUpdate(sql);
+			if(rowAffected==1)
+			{
+				employeeData = new Employee(employeeId, employeeName, salary, startDate);
+			}
+		}
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			try 
+			{
+				connection.rollback();
+
+			} catch (Exception ex) 
+			{
+				ex.printStackTrace();
+			}
+		}
+		try 
+		{
+			connection.commit();
+
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(connection!=null)
+			{
+				try 
+				{
+					connection.close();
+
+				} catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return employeeData;
+
+	}
+
+
 }
