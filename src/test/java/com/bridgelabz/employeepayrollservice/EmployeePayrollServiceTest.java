@@ -1,5 +1,6 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -19,16 +20,16 @@ public class EmployeePayrollServiceTest
 	@Test
 	public void given3EmployeesWhenWrittenToFileShouldMatchEmployeeEntries()
 	{
-		EmployeePayrollData[] arrayOfEmployees= {
-				new EmployeePayrollData(1, "Sheldon", 100000.0),
-				new EmployeePayrollData(2, "Penny",200000.0 ),
-				new EmployeePayrollData(3,"Ted",300000.0)
+		Employee[] arrayOfEmployees= {
+				new Employee(1, "Sheldon", 100000.0),
+				new Employee(2, "Penny",200000.0 ),
+				new Employee(3,"Ted",300000.0)
 
 		};
 
 		EmployeePayrollService employeePayrollService;
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployees));
-		employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
+		employeePayrollService.writeEmployee(IOService.FILE_IO);
 		employeePayrollService.printData(IOService.FILE_IO);
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
 		Assert.assertEquals(3, entries);
@@ -39,7 +40,7 @@ public class EmployeePayrollServiceTest
 	public void givenFileOnReadingFromFileShouldMatchEmployeeCount()
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		long entries = employeePayrollService.readEmployeePayrollData(IOService.FILE_IO).size();
+		long entries = employeePayrollService.readEmployee(IOService.FILE_IO).size();
 		Assert.assertEquals(3, entries);
 
 	}
@@ -48,33 +49,17 @@ public class EmployeePayrollServiceTest
 	public void  givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount()
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
-		Assert.assertEquals(3, employeePayrollList.size());
-	}
-
-	@Test
-	public void  givenEmployeePayrollInDB_WhenWrittenToDatabase_ShouldMatchEmployeeCount()
-	{
-		String dateString="2018-01-03";
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate date= LocalDate.parse(dateString, formatter);
-		EmployeePayrollData[] arrayOfEmployees= { new EmployeePayrollData(5, "Sheldon", 100000.0,date)};
-		
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployees));
-
-		employeePayrollService.writeEmployeePayrollData( IOService.DB_IO);
-		List<EmployeePayrollData> employeePayrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
-
+		List<Employee> employeePayrollList = employeePayrollService.readEmployee( IOService.DB_IO);
 		Assert.assertEquals(4, employeePayrollList.size());
-		
-		employeePayrollService.deleteEmployeeData(IOService.DB_IO,5);
 	}
+
+
 	
 	@Test
 	public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDB() throws UserEntryException
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePyrollList = employeePayrollService.readEmployeePayrollData( IOService.DB_IO);
+		List<Employee> employeePyrollList = employeePayrollService.readEmployee( IOService.DB_IO);
 		employeePayrollService.updateEmployeeSalary("Terisa",3000000.00);
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
 		Assert.assertTrue(result);
@@ -85,13 +70,12 @@ public class EmployeePayrollServiceTest
 	{
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 
-		Map<String, Double> expectedGenderSalaryMap = new HashMap<String, Double>();
-		expectedGenderSalaryMap.put("F", 3000000.0);
-		expectedGenderSalaryMap.put("M", 1300000.0);
 
 		Map<String, Double> genderSalaryMap = employeePayrollService.getSalarySumBasedOnGender( IOService.DB_IO);
 
-		Assert.assertEquals(expectedGenderSalaryMap, genderSalaryMap);
+		Assert.assertEquals(genderSalaryMap.get("F"),(Double)300000.0);
+		Assert.assertEquals(genderSalaryMap.get("M"),(Double)1310000.0);
+
 
 	}
 
@@ -109,5 +93,20 @@ public class EmployeePayrollServiceTest
 		Assert.assertEquals(2,count);
 
 	}
+	
+	@Test
+	public void givenNewEmployee_WhenAddedShouldSyncWithDB() throws SQLException, UserEntryException
+	{
+		
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployee(IOService.DB_IO);
+		employeePayrollService.addEmployeeToPayroll("aaa", "M", 10000.00, LocalDate.now(), 1);
+		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("aaa");
+		Assert.assertTrue(result);
+		
+		
+	}
+
+
 
 }
