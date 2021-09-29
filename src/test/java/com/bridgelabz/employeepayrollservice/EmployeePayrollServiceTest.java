@@ -19,7 +19,14 @@ import org.junit.Before;
 public class EmployeePayrollServiceTest 
 {
 	
-
+	@Before
+	public void test() throws SQLException, FileNotFoundException
+	{
+		
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.setUpDataBase();
+		
+	}
 
 		@Test
 		public void given3EmployeesWhenWrittenToFileShouldMatchEmployeeEntries()
