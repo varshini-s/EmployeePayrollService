@@ -105,7 +105,15 @@ public class EmployeePayrollService
 		if(employee!=null) 
 		{
 			employee.setSalary(salary);
+			double deductions=salary*0.2;
+			double taxablePay=salary-deductions;
+			double tax=taxablePay*0.1;
+			double netPay=salary-tax;
 			employee.getPayroll().setBasicPay(salary);
+			employee.getPayroll().setDeductions(deductions);
+			employee.getPayroll().setTaxablePay(taxablePay);
+			employee.getPayroll().setTax(tax);
+			employee.getPayroll().setNetPay(netPay);
 		}
 
 	}
