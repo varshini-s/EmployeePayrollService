@@ -153,8 +153,6 @@ public class EmployeePayrollService
 		{
 			return employeePayrollDBService.getMaxSalaryBasedOnGender();
 		}
-
-
 		return null;
 	}
 
@@ -164,8 +162,6 @@ public class EmployeePayrollService
 		{
 			return employeePayrollDBService.getMinSalaryBasedOnGender();
 		}
-
-
 		return null;
 	}
 	public Map<String, Double> getAverageSalaryBasedOnGender(IOService ioService) 
@@ -175,10 +171,17 @@ public class EmployeePayrollService
 			return employeePayrollDBService.getAverageSalaryBasedOnGender();
 		}
 
+		return null;
+	}
+	public Map<String, Double> getCountSalaryBasedOnGender(IOService ioService) 
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			return employeePayrollDBService.getCountSalaryBasedOnGender();
+		}
 
 		return null;
 	}
-
 
 	public int getEmployeeJoinCount(IOService ioService, String startDate, String endDate)
 	{
@@ -206,9 +209,7 @@ public class EmployeePayrollService
 				break;
 			}
 		}
-
 	}
-
 
 	public List<Employee> removeEmployee(IOService ioService, int id) 
 	{
@@ -218,8 +219,6 @@ public class EmployeePayrollService
 			return employeePayrollDBService.removeEmployee(id);
 		}
 		return null;
-
-
 	}
 
 	public void setUpDataBase() throws FileNotFoundException, SQLException 
@@ -228,7 +227,6 @@ public class EmployeePayrollService
 
 	}
 
-
-
+	
 
 }
