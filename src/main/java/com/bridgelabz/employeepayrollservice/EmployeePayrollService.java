@@ -1,5 +1,6 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +31,7 @@ public class EmployeePayrollService
 		this.employeePayrollList=employeePyrollList;
 
 	}
-	
+
 	public List<Employee> getEmployeePayrollList() {
 		return employeePayrollList;
 	}
@@ -101,7 +102,11 @@ public class EmployeePayrollService
 		int result =employeePayrollDBService.updateEmployeeData(name, salary);
 		if(result==0) return;
 		Employee employee=this.getEmployee(name);
-		if(employee!=null) employee.setSalary(salary);
+		if(employee!=null) 
+		{
+			employee.setSalary(salary);
+			employee.getPayroll().setBasicPay(salary);
+		}
 
 	}
 
@@ -148,7 +153,7 @@ public class EmployeePayrollService
 	{
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(employeeName, gender, salary, startDate, companyId));
 	}
-	
+
 	public void removeEmployeeFromList(int id)
 	{
 		for(int index=0;index<employeePayrollList.size();index++)
@@ -159,7 +164,7 @@ public class EmployeePayrollService
 				break;
 			}
 		}
-		
+
 	}
 
 
@@ -168,11 +173,17 @@ public class EmployeePayrollService
 	{
 		if(ioService.equals(IOService.DB_IO))
 		{
-			  this.removeEmployeeFromList(id);
-			  return employeePayrollDBService.removeEmployee(id);
+			this.removeEmployeeFromList(id);
+			return employeePayrollDBService.removeEmployee(id);
 		}
 		return null;
 
+
+	}
+
+	public void setUpDataBase() throws FileNotFoundException, SQLException 
+	{
+		employeePayrollDBService.setupDatabase();
 		
 	}
 }
