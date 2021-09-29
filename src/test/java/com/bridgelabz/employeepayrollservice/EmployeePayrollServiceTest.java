@@ -81,13 +81,22 @@ public class EmployeePayrollServiceTest
 		{
 			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	
+			Map<String, Double> salarySumMap=employeePayrollService.getSalarySumBasedOnGender( IOService.DB_IO);
 	
-			Map<String, Double> genderSalaryMap = employeePayrollService.getSalarySumBasedOnGender( IOService.DB_IO);
+			Assert.assertEquals(salarySumMap.get("F"),(Double)300000.0);
+			Assert.assertEquals(salarySumMap.get("M"),(Double)1300000.0);
+
+		}
+		@Test
+		public void givenEmployeePayrollInDB_ShouldRetrieveMaxEmployeeSalaryWithGenderMap()
+		{
+			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 	
-			Assert.assertEquals(genderSalaryMap.get("F"),(Double)300000.0);
-			Assert.assertEquals(genderSalaryMap.get("M"),(Double)1300000.0);
+			Map<String, Double> maxSalaryMap = employeePayrollService.getMaxSalaryBasedOnGender( IOService.DB_IO);
 	
-	
+			Assert.assertEquals(maxSalaryMap.get("F"),(Double)300000.0);
+			Assert.assertEquals(maxSalaryMap.get("M"),(Double)1000000.0);
+
 		}
 	
 		@Test
@@ -115,7 +124,6 @@ public class EmployeePayrollServiceTest
 			boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("aaa");
 			Assert.assertTrue(result);
 			
-			
 		}
 		
 		@Test
@@ -129,7 +137,6 @@ public class EmployeePayrollServiceTest
 			Assert.assertEquals(employeeListInMemory.size(), count-1);
 	
 		}
-
 
 
 }
