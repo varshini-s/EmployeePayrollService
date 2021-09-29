@@ -13,7 +13,6 @@ import java.util.Map;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import com.bridgelabz.employeepayrollservice.UserEntryException.ExceptionType;
-
 import java.time.LocalDate;
 
 public class EmployeePayrollDBService 
@@ -158,7 +157,6 @@ public class EmployeePayrollDBService
 		try(Statement statement=connection.createStatement())
 		{
 			updateSalaryInEmployeeTable(name,salary);
-
 
 		}
 		catch (SQLException e) 
@@ -312,12 +310,13 @@ public class EmployeePayrollDBService
 		return employeeList;
 	}
 
-	public Map<String, Double> getSalarySumBasedOnGender()
+	private Map<String, Double> getGivenOperationWithGenderMap(String operation) 
 	{
-		Map<String, Double> genderSalaryMap = new HashMap<String, Double>();
+		Map<String, Double> genderMap =new HashMap<String, Double>();
 
-		String sql="SELECT SUM(salary),gender FROM employee GROUP BY gender";
-
+		String commonStringInQuery= ",gender FROM employee GROUP BY gender";
+		String sql="SELECT "+operation+commonStringInQuery;
+		
 		try (Connection connection = this.getConnection())
 		{
 			Statement statement=connection.createStatement();
@@ -325,40 +324,32 @@ public class EmployeePayrollDBService
 			while(resultSet.next())
 			{
 				String gender=resultSet.getString("gender");
-				double salarySum=resultSet.getDouble("SUM(salary)");
-				genderSalaryMap.put(gender, salarySum);
+				double maxSalary=resultSet.getDouble(operation);
+				genderMap.put(gender, maxSalary);
 			}
 		} 
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
 		}
-		return genderSalaryMap;
+		return genderMap;
+		
+	}
+	public Map<String, Double> getSalarySumBasedOnGender()
+	{
+
+		String operation="SUM(salary)";
+		return getGivenOperationWithGenderMap(operation);
 	}
 	
 	public Map<String, Double> getMaxSalaryBasedOnGender() 
 	{
-		Map<String, Double> maxSalaryMap =new HashMap<String, Double>();
-
-		String sql="SELECT MAX(salary),gender FROM employee GROUP BY gender";
-
-		try (Connection connection = this.getConnection())
-		{
-			Statement statement=connection.createStatement();
-			ResultSet resultSet=statement.executeQuery(sql);
-			while(resultSet.next())
-			{
-				String gender=resultSet.getString("gender");
-				double maxSalary=resultSet.getDouble("MAX(salary)");
-				maxSalaryMap.put(gender, maxSalary);
-			}
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return maxSalaryMap;
+		String operation= "MAX(salary)";
+		return getGivenOperationWithGenderMap(operation);
 	}
+	
+
+
 
 	public int getEmployeeJoinCount(String startDate, String endDate)
 	{
@@ -505,6 +496,8 @@ public class EmployeePayrollDBService
 		}
 		return null;
 	}
+
+
 
 
 
