@@ -98,6 +98,17 @@ public class EmployeePayrollServiceTest
 			Assert.assertEquals(maxSalaryMap.get("M"),(Double)1000000.0);
 
 		}
+		@Test
+		public void givenEmployeePayrollInDB_ShouldRetrieveMinEmployeeSalaryWithGenderMap()
+		{
+			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	
+			Map<String, Double> minSalaryMap = employeePayrollService.getMinSalaryBasedOnGender( IOService.DB_IO);
+	
+			Assert.assertEquals(minSalaryMap.get("F"),(Double)300000.0);
+			Assert.assertEquals(minSalaryMap.get("M"),(Double)300000.0);
+
+		}
 	
 		@Test
 		public void givenDateRangeOfJoiningDate_ShouldReturnCountOfEmployeesJoinedFromDataBase()
