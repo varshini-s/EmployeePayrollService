@@ -355,6 +355,13 @@ public class EmployeePayrollDBService
 		return getGivenOperationWithGenderMap(operation);
 	}
 
+
+	public Map<String, Double> getAverageSalaryBasedOnGender()
+	{
+		String operation= "AVG(salary)";
+		return getGivenOperationWithGenderMap(operation);
+	}
+
 	public int getEmployeeJoinCount(String startDate, String endDate)
 	{
 		String sql = String.format("SELECT * FROM employee  JOIN payroll ON employee.id=payroll.id WHERE start BETWEEN '%s' AND '%s';",Date.valueOf(startDate),Date.valueOf(endDate));
