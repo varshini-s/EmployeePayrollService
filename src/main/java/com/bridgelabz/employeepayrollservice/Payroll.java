@@ -1,32 +1,25 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.util.Objects;
+
 public class Payroll 
 {
-	private int employeeId;
 	private double basicPay;
 	private double deductions;
 	private double taxablePay;
 	private double tax;
 	private double netPay;
 	
-	public Payroll(int employeeId, double basicPay, double deductions, double taxablePay, double tax, double netPay) 
+	public Payroll( double basicPay, double deductions, double taxablePay, double tax, double netPay) 
 	{
 		
-		this.employeeId = employeeId;
 		this.basicPay = basicPay;
 		this.deductions = deductions;
 		this.taxablePay = taxablePay;
 		this.tax = tax;
 		this.netPay = netPay;
 	}
-	public int getEmployeeId() 
-	{
-		return employeeId;
-	}
-	public void setEmployeeId(int employeeId) 
-	{
-		this.employeeId = employeeId;
-	}
+
 	public double getBasicPay() 
 	{
 		return basicPay;
@@ -67,6 +60,33 @@ public class Payroll
 	{
 		this.netPay = netPay;
 	}
+
+	@Override
+	public String toString() {
+		return "Payroll [basicPay=" + basicPay + ", deductions=" + deductions + ", taxablePay=" + taxablePay + ", tax="
+				+ tax + ", netPay=" + netPay + "]";
+	}
+
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Payroll other = (Payroll) obj;
+		return Double.doubleToLongBits(basicPay) == Double.doubleToLongBits(other.basicPay)
+				&& Double.doubleToLongBits(deductions) == Double.doubleToLongBits(other.deductions)
+				&& Double.doubleToLongBits(netPay) == Double.doubleToLongBits(other.netPay)
+				&& Double.doubleToLongBits(tax) == Double.doubleToLongBits(other.tax)
+				&& Double.doubleToLongBits(taxablePay) == Double.doubleToLongBits(other.taxablePay);
+	}
+
+	
+	
 
 
 }
