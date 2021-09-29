@@ -146,6 +146,18 @@ public class EmployeePayrollService
 
 		return null;
 	}
+	
+	public Map<String, Double> getMaxSalaryBasedOnGender(IOService ioService) 
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			return employeePayrollDBService.getMaxSalaryBasedOnGender();
+		}
+
+
+		return null;
+	}
+	
 	public int getEmployeeJoinCount(IOService ioService, String startDate, String endDate)
 	{
 		if(ioService.equals(IOService.DB_IO))
@@ -176,7 +188,6 @@ public class EmployeePayrollService
 	}
 
 
-
 	public List<Employee> removeEmployee(IOService ioService, int id) 
 	{
 		if(ioService.equals(IOService.DB_IO))
@@ -194,4 +205,6 @@ public class EmployeePayrollService
 		employeePayrollDBService.setupDatabase();
 		
 	}
+
+	
 }
