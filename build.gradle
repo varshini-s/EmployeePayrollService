@@ -30,7 +30,8 @@ dependencies {
     compile "commons-io:commons-io:+"
     
     compile("mysql:mysql-connector-java:5.1.49")
-    
+    compile ("org.mybatis:mybatis:3.5.7")
+
     
 
     
