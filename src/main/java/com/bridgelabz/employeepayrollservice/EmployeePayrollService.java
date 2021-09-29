@@ -158,6 +158,18 @@ public class EmployeePayrollService
 		return null;
 	}
 	
+	public Map<String, Double> getMinSalaryBasedOnGender(IOService ioService)
+	{
+		if(ioService.equals(IOService.DB_IO))
+		{
+			return employeePayrollDBService.getMinSalaryBasedOnGender();
+		}
+
+
+		return null;
+	}
+
+	
 	public int getEmployeeJoinCount(IOService ioService, String startDate, String endDate)
 	{
 		if(ioService.equals(IOService.DB_IO))
@@ -205,6 +217,7 @@ public class EmployeePayrollService
 		employeePayrollDBService.setupDatabase();
 		
 	}
+
 
 	
 }
