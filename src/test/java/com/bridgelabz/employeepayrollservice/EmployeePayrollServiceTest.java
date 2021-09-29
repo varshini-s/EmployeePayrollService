@@ -107,7 +107,16 @@ public class EmployeePayrollServiceTest
 	
 			Assert.assertEquals(minSalaryMap.get("F"),(Double)300000.0);
 			Assert.assertEquals(minSalaryMap.get("M"),(Double)300000.0);
-
+		}
+		@Test
+		public void givenEmployeePayrollInDB_ShouldRetrieveAverageEmployeeSalaryWithGenderMap()
+		{
+			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+	
+			Map<String, Double> averageSalaryMap = employeePayrollService.getAverageSalaryBasedOnGender( IOService.DB_IO);
+	
+			Assert.assertEquals(averageSalaryMap.get("F"),(Double)300000.0);
+			Assert.assertEquals(averageSalaryMap.get("M"),(Double)650000.0);
 		}
 	
 		@Test
