@@ -349,7 +349,11 @@ public class EmployeePayrollDBService
 	}
 	
 
-
+	public Map<String, Double> getMinSalaryBasedOnGender()
+	{
+		String operation= "MIN(salary)";
+		return getGivenOperationWithGenderMap(operation);
+	}
 
 	public int getEmployeeJoinCount(String startDate, String endDate)
 	{
