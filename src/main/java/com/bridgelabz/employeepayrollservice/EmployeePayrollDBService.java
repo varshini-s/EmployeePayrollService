@@ -53,7 +53,7 @@ public class EmployeePayrollDBService
 	{
 		Connection connection = this.getConnection();
 		ScriptRunner sr = new ScriptRunner(connection);
-		Reader reader = new BufferedReader(new FileReader("/home/varshini/Desktop/employee2.sql"));
+		Reader reader = new BufferedReader(new FileReader("EmployeePayrollDatabase.sql"));
 		sr.runScript(reader);
 
 
