@@ -335,6 +335,30 @@ public class EmployeePayrollDBService
 		}
 		return genderSalaryMap;
 	}
+	
+	public Map<String, Double> getMaxSalaryBasedOnGender() 
+	{
+		Map<String, Double> maxSalaryMap =new HashMap<String, Double>();
+
+		String sql="SELECT MAX(salary),gender FROM employee GROUP BY gender";
+
+		try (Connection connection = this.getConnection())
+		{
+			Statement statement=connection.createStatement();
+			ResultSet resultSet=statement.executeQuery(sql);
+			while(resultSet.next())
+			{
+				String gender=resultSet.getString("gender");
+				double maxSalary=resultSet.getDouble("MAX(salary)");
+				maxSalaryMap.put(gender, maxSalary);
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return maxSalaryMap;
+	}
 
 	public int getEmployeeJoinCount(String startDate, String endDate)
 	{
@@ -481,5 +505,7 @@ public class EmployeePayrollDBService
 		}
 		return null;
 	}
+
+
 
 }
