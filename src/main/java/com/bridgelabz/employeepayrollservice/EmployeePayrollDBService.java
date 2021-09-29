@@ -1,10 +1,16 @@
 package com.bridgelabz.employeepayrollservice;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 import com.bridgelabz.employeepayrollservice.UserEntryException.ExceptionType;
 
@@ -30,7 +36,7 @@ public class EmployeePayrollDBService
 		}
 		return  employeePayrollDBService;
 	}
-	private Connection getConnection() throws SQLException 
+	public Connection getConnection() throws SQLException 
 	{
 		String jdbcURL ="jdbc:mysql://localhost:3306/payroll_service?allowPublicKeyRetrieval=true&useSSL=false";
 		String username="root";
@@ -44,9 +50,20 @@ public class EmployeePayrollDBService
 		return connection;
 	}
 
+	public void setupDatabase() throws SQLException, FileNotFoundException
+	{
+		Connection connection = this.getConnection();
+		ScriptRunner sr = new ScriptRunner(connection);
+		Reader reader = new BufferedReader(new FileReader("/home/varshini/Desktop/employee2.sql"));
+		sr.runScript(reader);
+
+
+	}
+
 	public List<Employee> readData() 
 	{
-		String sql="SELECT * FROM employee";
+
+		String sql="SELECT * FROM employee JOIN payroll ON employee.id=payroll.id";
 		List<Employee> employeeList = getEmployeeDataUsingDB(sql);
 
 		return employeeList;
@@ -55,33 +72,9 @@ public class EmployeePayrollDBService
 
 	public int updateEmployeeData(String name, double salary) throws UserEntryException 
 	{
-		this.updateEmployeeDataUsingPreparedStatement(name,salary);
-		return 0;
+		return this.updateEmployeeDataUsingPreparedStatement(name,salary);
 	}
 
-	private int updateEmployeeDataUsingStatement(String name, double salary) throws UserEntryException 
-	{
-		String sql = String.format("UPDATE employee SET basic_pay = %.2f WHERE name = '%s';",salary,name);
-		try (Connection connection = this.getConnection())
-		{
-
-			if(name.isEmpty())
-			{
-				throw new UserEntryException(ExceptionType.ENTERED_EMPTY,"Please enter valid Name");
-			}
-			Statement statement=connection.createStatement();
-			return statement.executeUpdate(sql);
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (NullPointerException e) 
-		{
-			throw new UserEntryException(ExceptionType.ENTERED_NULL,"Please enter valid Name");
-		}
-		return 0;
-	}
 	private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws UserEntryException 
 	{
 		if(this.employeePayrollUpdateDataStatement==null)
@@ -172,7 +165,16 @@ public class EmployeePayrollDBService
 				String nameFromDB=resultSet.getString("name");
 				double salary=resultSet.getDouble("salary");
 				LocalDate startDate= resultSet.getDate("start").toLocalDate();
-				employeeList.add(new Employee(id, nameFromDB, salary,startDate));
+
+				double deductions=resultSet.getDouble("deductions");
+				double taxablePay=resultSet.getDouble("taxable_pay");
+				double tax=resultSet.getDouble("tax");
+				double netPay=resultSet.getDouble("net_pay");
+				Payroll payroll = new Payroll( salary, deductions, taxablePay, tax, netPay);
+
+				Employee employee = new Employee(id, nameFromDB, salary,startDate);
+				employee.setPayroll(payroll);
+				employeeList.add(employee);
 			}
 
 		}
@@ -190,7 +192,7 @@ public class EmployeePayrollDBService
 		try 
 		{
 			Connection connection = this.getConnection();
-			String sql="SELECT * from employee WHERE name=?";
+			String sql="SELECT *  FROM employee JOIN payroll ON employee.id=payroll.id WHERE name=?";
 			employeeDataStatement=connection.prepareStatement(sql);
 		}
 		catch (SQLException e)
@@ -254,7 +256,7 @@ public class EmployeePayrollDBService
 
 	public int getEmployeeJoinCount(String startDate, String endDate)
 	{
-		String sql = String.format("SELECT * FROM employee WHERE start BETWEEN '%s' AND '%s';",Date.valueOf(startDate),Date.valueOf(endDate));
+		String sql = String.format("SELECT * FROM employee  JOIN payroll ON employee.id=payroll.id WHERE start BETWEEN '%s' AND '%s';",Date.valueOf(startDate),Date.valueOf(endDate));
 
 		return this.getEmployeeDataUsingDB(sql).size();
 	}
@@ -279,7 +281,7 @@ public class EmployeePayrollDBService
 
 
 	public Employee addEmployeeToPayroll( String employeeName, String gender, double salary, LocalDate startDate,
-										int companyId) throws SQLException 
+			int companyId) throws SQLException 
 	{
 		int employeeId=-1;
 		Connection connection=null;
@@ -326,11 +328,13 @@ public class EmployeePayrollDBService
 			double netPay=salary-tax;
 
 			String sql=String.format("INSERT INTO payroll(id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES "
-								 + "('%s','%s','%s','%s','%s','%s');",employeeId,salary,deductions,taxablePay,tax,netPay);
+					+ "('%s','%s','%s','%s','%s','%s');",employeeId,salary,deductions,taxablePay,tax,netPay);
 			int rowAffected=statement.executeUpdate(sql);
 			if(rowAffected==1)
 			{
+				Payroll payroll = new Payroll( salary, deductions, taxablePay, tax, netPay);
 				employeeData = new Employee(employeeId, employeeName, salary, startDate);
+				employeeData.setPayroll(payroll);
 			}
 		}
 		catch (SQLException e) 
@@ -372,14 +376,15 @@ public class EmployeePayrollDBService
 	}
 
 	public List<Employee> removeEmployee(int id)
+
 	{
-		
+
 		String sql = String.format("UPDATE employee SET is_active=false WHERE id = '%d';",id);
 		try (Connection connection = this.getConnection())
 		{
 
 			Statement statement=connection.createStatement();
-			 statement.executeUpdate(sql);
+			statement.executeUpdate(sql);
 			return this.readData();
 		} 
 		catch (SQLException e) 
@@ -387,8 +392,10 @@ public class EmployeePayrollDBService
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
+
+
 
 
 }
